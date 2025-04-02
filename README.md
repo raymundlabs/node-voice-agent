@@ -1,46 +1,35 @@
-> INSTRUCTIONS
 
-> 1. If your app requires an UI: Copy the entire contents of https://github.com/deepgram-starters/deepgram-starters-ui to the `./static/` folder.
+# Node Voice Agent Starter
 
-> 2. The configuration of the `deepgram.toml` file, is required so we can include the starter in future onboarding workflows.
-
-> 3. Consistent naming of the project repo is important. Please don't deviate from our standards. Example repo name: [language] [use case] 
-
-> 4. Use the readme template below, don't deviate from it.
-
-> 5. Use the [cursor rules](./.cursor/rules) with [Cursor](https://www.cursor.com/) to help build your starter more quickly!
----
-
-# [Language] [Usecase] Starter
-
-> Write a brief intro for this project.
+Start building interactive voice experiences with Deepgram's Voice Agent API using this Node.js starter application. This project demonstrates how to create a voice agent that can engage in natural conversations using Deepgram's advanced AI capabilities.
 
 ## What is Deepgram?
-> Please leave this section unchanged.
 
-[Deepgram’s](https://deepgram.com/) voice AI platform provides APIs for speech-to-text, text-to-speech, and full speech-to-speech voice agents. Over 200,000+ developers use Deepgram to build voice AI products and features.
+[Deepgram's](https://deepgram.com/) voice AI platform provides APIs for speech-to-text, text-to-speech, and full speech-to-speech voice agents. Over 200,000+ developers use Deepgram to build voice AI products and features.
 
-## Sign-up to Deepgram
+## Prerequisites
 
-> Please leave this section unchanged, unless providing a UTM on the URL.
-
-Before you start, it's essential to generate a Deepgram API key to use in this project. [Sign-up now for Deepgram and create an API key](https://console.deepgram.com/signup?jump=keys).
+Before you begin, ensure you have:
+- Node.js 18 or higher installed
+- npm (comes with Node.js)
+- A Deepgram API key (see below)
+- Audio files in supported formats (WAV, MP3, M4A, or FLAC)
 
 ## Quickstart
 
-> Detail the manual steps to get started.
+> TODO: Needs updating
 
 e.g.
 
-### Manual
-
 Follow these steps to get started with this starter application.
 
-#### Clone the repository
+### Clone the repository
 
-Go to GitHub and [clone the repository](https://github.com/deepgram-starters/prerecorded-node-starter).
+Go to GitHub and [clone the repository](https://github.com/deepgram-starters/node-voice-agent).
 
-#### Install dependencies
+### Install dependencies
+
+ > TODO: needs updating
 
 Install the project dependencies.
 
@@ -48,45 +37,52 @@ Install the project dependencies.
 npm install
 ```
 
-#### Edit the config file
+### Create a `.env` config file
 
-> Config file can be any appropriate file for the framework/language. For e.g.
-> Node is using a config.json file, while Python is only use .env files
-
-Copy the code from `sample.env` and create a new file called `.env`. Paste in the code and enter your API key you generated in the [Deepgram console](https://console.deepgram.com/).
+Copy the code from `sample.env` and create a new file called `.env`. Paste in the code and enter your API key you generated in the [Deepgram Console](https://console.deepgram.com/).
 
 ```json
 DEEPGRAM_API_KEY=%api_key%
 ```
 
-#### Run the application
+### Run the application
 
-> If your starter has a UI, it must always run on port 8080
-
-The `dev` script will run a web and API server concurrently. Once running, you can [access the application in your browser](http://localhost:8080/).
+> TODO: Needs updating
 
 ```bash
 npm start
 ```
 
-## Issue Reporting
+## Using Cursor & MDC Rules
 
-If you have found a bug or if you have a feature request, please report them at this repository issues section. Please do not report security vulnerabilities on the public GitHub issue tracker. The [Security Policy](./SECURITY.md) details the procedure for contacting Deepgram.
+This application can be modify as needed by using the [app-requirements.mdc](.cursor/rules/app-requirements.mdc) file. This file allows you to specify various settings and parameters for the application in a structured format that can be use along with [Cursor's](https://www.cursor.com/) AI Powered Code Editor.
+
+### Using the `app-requirements.mdc` File
+
+1. Clone or Fork this repo.
+2. Modify the `app-requirements.mdc`
+3. Add the necessary configuration settings in the file.
+4. You can refer to the MDC file used to help build this starter application by reviewing  [app-requirements.mdc](.cursor/rules/app-requirements.mdc)
+
 
 ## Getting Help
 
-We love to hear from you so if you have questions, comments or find a bug in the project, let us know! You can either:
+- Join our [Discord community](https://discord.gg/deepgram) for support
+- Found a bug? [Create an issue](https://github.com/deepgram-starters/node-voice-agent/issues)
+- Have a feature request? [Submit it here](https://github.com/deepgram-starters/node-voice-agent/issues)
 
-> be sure to set the repo-name in the issue URL.
+## Contributing
 
-- [Open an issue in this repository](https://github.com/deepgram-starters/{repo-name]/issues/new)
-- [Join the Deepgram Github Discussions Community](https://github.com/orgs/deepgram/discussions)
-- [Join the Deepgram Discord Community](https://discord.gg/xWRaCDBtW4)
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
-## Author
+## Security
 
-[Deepgram](https://deepgram.com)
+For security concerns, please review our [Security Policy](SECURITY.md).
+
+## Code of Conduct
+
+This project adheres to a [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
 
 ## License
 
-This project is licensed under the MIT license. See the [LICENSE](./LICENSE) file for more info.
+This project is licensed under the terms specified in [LICENSE](LICENSE).
