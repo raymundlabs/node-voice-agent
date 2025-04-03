@@ -9,30 +9,25 @@ alwaysApply: false
 ## Core Requirements
 - SHOULD live in a single file with minimal dependencies, i.e. `index.ts`
 - SHOULD uses TypeScript, not JavaScript
-- SHOULD use the latest version of the official SDK where provided
-- MUST falls back to manual integration using the API spec where there is no SDK
+- SHOULD use the latest version of the official Deepgram SDK
 - MUST run in a terminal
 - MUST be usable in command line with a single command
-- MUST Run with `npm start --serve` as an API to connect to the agent and wait for input messages
+- MUST Run with `npm start --serve`
 - MUST get API keys and other sensitive config from a `.env` file
 - MUST provide help code comments explaining the primary functions of the app
 - MUST be able to use the Deepgram Voice Agent API
 
 ## App Requirements:
 - MUST launch a web server that can act as a basic proxy to the agent
-- MUST allow the browser client to open an http file that is an empty web page
-- MUST allow the user to connect their microphone in browser
-- MUST allow the user user to speak via their microphone in browser
+- MUST allow a browser client to open an http file that is an empty web page
+- MUST allow the user to connect their microphone in the browser
+- MUST allow the user user to speak via their microphone in the browser
 - MUST not have any UI elements
 - MUST have the terminal display the interactions with agent
-- MUST send the settings message to the agent connection
-- MUST Set up agent listeners for the welcome message
 - MUST Listen for the API output and prints it in the terminal
-- MUST Listen for the API response message and prints it in the terminal
+- MUST Listen for the API response messages and print it in the terminal
 - MUST Gracefully closes the connection with the agent
 - MUST exit gracefully without any Agent API errors
-
-
 - MUST Runs in terminal to connect to the Agent API, and follows a predefined script of interactions as such:
 
 
