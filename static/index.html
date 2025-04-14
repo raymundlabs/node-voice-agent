@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deepgram Voice Agent</title>
+</head>
+<body>
+    <h1>Deepgram Voice Agent Browser Demo</h1>
+    <p>This is a demo of the Deepgram Voice Agent. It uses the <a href="https://developers.deepgram.com/reference/voice-agent-api/agent">Deepgram Voice Agent API</a>.</p>
+    <p>Please enable your microphone in the browser to start the conversation.</p>
+    <script>
+        let socket;
+        let mediaStream;
+        let audioContext;
+        let processor;
+        let audioQueue = [];
+        let isPlaying = false;
+
+        async function init() {
+            try {
+                // Get microphone permission
+                mediaStream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        channelCount: 1,
+                        sampleRate: 48000
+                    }
+                });
+
+                // Connect to WebSocket server
+                socket = new WebSocket('ws://localhost:3000');
+
+                socket.onopen = () => {
+                    console.log('Connected to server');
+                    startStreaming();
+                };
+
+                socket.onmessage = async (event) => {
+                    if (event.data instanceof Blob) {
+                        const arrayBuffer = await event.data.arrayBuffer();
+                        const audioData = new Int16Array(arrayBuffer);
+                        playAudioResponse(audioData);
+                    }
+                };
+
+                socket.onerror = (error) => {
+                    console.error('WebSocket error:', error);
+                };
+
+                socket.onclose = () => {
+                    console.log('Connection closed');
+                    stopStreaming();
+                };
+            } catch (error) {
+                console.error('Error initializing:', error);
+            }
+        }
+
+        function startStreaming() {
+            if (!mediaStream) return;
+
+            try {
+                audioContext = new AudioContext({
+                    sampleRate: 48000
+                });
+                const source = audioContext.createMediaStreamSource(mediaStream);
+                processor = audioContext.createScriptProcessor(2048, 1, 1);
+
+                source.connect(processor);
+                processor.connect(audioContext.destination);
+
+                processor.onaudioprocess = (e) => {
+                    if (socket && socket.readyState === WebSocket.OPEN) {
+                        const inputData = e.inputBuffer.getChannelData(0);
+                        const pcmData = new Int16Array(inputData.length);
+                        for (let i = 0; i < inputData.length; i++) {
+                            pcmData[i] = Math.max(-1, Math.min(1, inputData[i])) * 0x7FFF;
+                        }
+                        socket.send(pcmData.buffer);
+                    }
+                };
+            } catch (error) {
+                console.error('Error starting audio stream:', error);
+            }
+        }
+
+        async function playAudioResponse(audioData) {
+            try {
+                const buffer = audioContext.createBuffer(1, audioData.length, 24000);
+                const channelData = buffer.getChannelData(0);
+
+                // Convert Int16 to Float32
+                for (let i = 0; i < audioData.length; i++) {
+                    channelData[i] = audioData[i] / 0x7FFF;
+                }
+
+                const source = audioContext.createBufferSource();
+                source.buffer = buffer;
+                source.connect(audioContext.destination);
+                source.start();
+
+                source.onended = () => {
+                    isPlaying = false;
+                    if (audioQueue.length > 0) {
+                        playAudioResponse(audioQueue.shift());
+                    }
+                };
+            } catch (error) {
+                console.error('Error playing audio response:', error);
+            }
+        }
+
+        function stopStreaming() {
+            if (processor) {
+                processor.disconnect();
+                processor = null;
+            }
+            if (audioContext) {
+                audioContext.close();
+                audioContext = null;
+            }
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream = null;
+            }
+        }
+
+        // Initialize when the page loads
+        window.onload = init;
+
+        // Clean up when the page is closed
+        window.onbeforeunload = () => {
+            stopStreaming();
+            if (socket) {
+                socket.close();
+            }
+        };
+    </script>
+</body>
+</html>

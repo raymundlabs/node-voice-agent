@@ -5,7 +5,7 @@ author = "Deepgram DX Team <devrel@deepgram.com> (https://developers.deepgram.co
 useCase = "Agent"
 language = "TypeScript"
 framework = "Node"
-sdk = "3.8.12"
+sdk = "latest"
 
 [build]
 command = "npm install"
@@ -15,4 +15,4 @@ sample = "sample.env"
 output = ".env"
 
 [post-build]
-message = "Run `npm start -- --serve` to start the web server."
+message = "Run `npm start` to start the server."

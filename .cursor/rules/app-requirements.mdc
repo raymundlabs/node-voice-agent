@@ -28,12 +28,27 @@ alwaysApply: false
 - MUST Listen for the API response messages and print it in the terminal
 - MUST Gracefully closes the connection with the agent
 - MUST exit gracefully without any Agent API errors
-- MUST Runs in terminal to connect to the Agent API, and follows a predefined script of interactions as such:
+- MUST Runs in terminal to connect to the Agent API, and follows a predefined script of interactions.
 
 
-``` json
-Client
-{
+## Exampla App Code:
+
+```js
+import { createClient } from "@deepgram/sdk";
+import { AgentEvents } from "@deepgram/sdk";
+
+const deepgram = createClient(DEEPGRAM_API_KEY);
+
+// Create an agent connection
+const agent = deepgram.agent.live();
+
+// Set up event handlers
+agent.on(AgentEvents.Open, () => {
+  console.log("Connection opened");
+
+  // Configure the agent once connection is established
+  agent.configure({
+    {
   "type": "SettingsConfiguration",
   "audio": {
     "input": {
@@ -51,7 +66,7 @@ Client
       "model": "nova-3"
     },
     "speak": {
-      "model": "aura-2-thalia-en"
+      "model": "aura-asteria-en"
     },
     "think": {
       "model": "gpt-4o-mini",
@@ -71,6 +86,44 @@ Client
     "replay": true
   }
 }
+  });
+});
+
+// Handle agent responses
+agent.on(AgentEvents.AgentStartedSpeaking, (data) => {
+  console.log("Agent started speaking:", data["total_latency"]);
+});
+
+agent.on(AgentEvents.ConversationText, (message) => {
+  console.log(`${message.role} said: ${message.content}`);
+});
+
+agent.on(AgentEvents.Audio, (audio) => {
+  // Handle audio data from the agent
+  playAudio(audio); // Your audio playback implementation
+});
+
+agent.on(AgentEvents.Error, (error) => {
+  console.error("Error:", error);
+});
+
+agent.on(AgentEvents.Close, () => {
+  console.log("Connection closed");
+});
+
+// Send audio data
+function sendAudioData(audioData) {
+  agent.send(audioData);
+}
+
+// Keep the connection alive
+setInterval(() => {
+  agent.keepAlive();
+}, 8000);
+```
+
+## Script of interactions 
+```json
 Server
 {
   "type": "Welcome",
