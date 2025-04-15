@@ -41,14 +41,14 @@ async function connectToAgent() {
 
     // Set up event handlers
     agent.on(AgentEvents.Open, () => {
-      console.log('Connection opened');
-      // Configure the agent once connection is established
+      // Only log critical connection events
+      console.log('Agent connection established');
       agent.configure({
         type: 'SettingsConfiguration',
         audio: {
           input: {
             encoding: 'linear16',
-            sampleRate: 48000
+            sampleRate: 24000
           },
           output: {
             encoding: 'linear16',
@@ -93,28 +93,32 @@ Remember that you have a voice interface. You can listen and speak, and all your
     });
 
     agent.on(AgentEvents.AgentStartedSpeaking, (data: { total_latency: number }) => {
-      console.log('Agent started speaking:', data.total_latency);
+      // Remove unnecessary latency logging
     });
 
     agent.on(AgentEvents.ConversationText, (message: { role: string; content: string }) => {
-      console.log(`${message.role} said: ${message.content}`);
+      // Only log the conversation text for debugging
+      console.log(`${message.role}: ${message.content}`);
     });
 
     agent.on(AgentEvents.Audio, (audio: Buffer) => {
-      // Forward the agent's audio response to the browser client
-      if (browserWs && browserWs.readyState === WebSocket.OPEN) {
-        browserWs.send(audio);
+      if (browserWs?.readyState === WebSocket.OPEN) {
+        try {
+          // Send the audio buffer directly without additional conversion
+          browserWs.send(audio, { binary: true });
+        } catch (error) {
+          console.error('Error sending audio to browser:', error);
+        }
       }
     });
 
     agent.on(AgentEvents.Error, (error: Error) => {
-      console.error('Error:', error);
+      console.error('Agent error:', error);
     });
 
     agent.on(AgentEvents.Close, () => {
-      console.log('Connection closed');
-      // Clean up browser connection if it exists
-      if (browserWs && browserWs.readyState === WebSocket.OPEN) {
+      console.log('Agent connection closed');
+      if (browserWs?.readyState === WebSocket.OPEN) {
         browserWs.close();
       }
     });
@@ -131,40 +135,97 @@ const wss = new WebSocket.Server({ server });
 let browserWs: WebSocket | null = null;
 
 wss.on('connection', async (ws) => {
+  // Only log critical connection events
   console.log('Browser client connected');
   browserWs = ws;
 
   const agent = await connectToAgent();
 
-  // Send audio data from browser to agent
   ws.on('message', (data: Buffer) => {
     try {
       if (agent) {
         agent.send(data);
-        console.log('Sent audio data to agent');
       }
     } catch (error) {
-      console.error('Error sending audio data:', error);
+      console.error('Error sending audio to agent:', error);
     }
   });
 
   ws.on('close', () => {
     console.log('Browser client disconnected');
     browserWs = null;
-    // Close the agent connection
     if (agent) {
       agent.disconnect();
     }
   });
 
-  // Handle browser WebSocket errors
   ws.on('error', (error) => {
-    console.error('Browser WebSocket error:', error);
+    console.error('WebSocket error:', error);
   });
 });
 
 // Start the server
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
+const serverInstance = server.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
+
+// Graceful shutdown handler
+function shutdown() {
+  console.log('\nShutting down server...');
+
+  // Set a timeout to force exit if graceful shutdown takes too long
+  const forceExit = setTimeout(() => {
+    console.error('Force closing due to timeout');
+    process.exit(1);
+  }, 5000);
+
+  // Track pending operations
+  let pendingOps = {
+    ws: true,
+    http: true
+  };
+
+  // Function to check if all operations are complete
+  const checkComplete = () => {
+    if (!pendingOps.ws && !pendingOps.http) {
+      clearTimeout(forceExit);
+      console.log('Server shutdown complete');
+      process.exit(0);
+    }
+  };
+
+  // Close all WebSocket connections
+  wss.clients.forEach((client) => {
+    try {
+      client.close();
+    } catch (err) {
+      console.error('Error closing WebSocket client:', err);
+    }
+  });
+
+  wss.close((err) => {
+    if (err) {
+      console.error('Error closing WebSocket server:', err);
+    } else {
+      console.log('WebSocket server closed');
+    }
+    pendingOps.ws = false;
+    checkComplete();
+  });
+
+  // Close the HTTP server
+  serverInstance.close((err) => {
+    if (err) {
+      console.error('Error closing HTTP server:', err);
+    } else {
+      console.log('HTTP server closed');
+    }
+    pendingOps.http = false;
+    checkComplete();
+  });
+}
+
+// Handle shutdown signals
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
