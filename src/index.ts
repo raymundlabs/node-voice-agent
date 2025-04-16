@@ -151,12 +151,12 @@ wss.on('connection', async (ws) => {
     }
   });
 
-  ws.on('close', () => {
-    console.log('Browser client disconnected');
-    browserWs = null;
+  ws.on('close', async () => {
     if (agent) {
-      agent.disconnect();
+      await agent.disconnect();
     }
+    browserWs = null;
+    console.log('Browser client disconnected');
   });
 
   ws.on('error', (error) => {
@@ -229,3 +229,5 @@ function shutdown() {
 // Handle shutdown signals
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
+
+export default serverInstance;

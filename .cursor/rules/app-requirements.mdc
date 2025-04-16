@@ -263,7 +263,7 @@ Server
 ```
 
 ## Test Requirements
-- MUST have tests that validates the CLI functionality is working
+- MUST have basic tests that validates the browser and agent functionality is working
 
 
 
