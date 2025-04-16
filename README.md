@@ -1,4 +1,3 @@
-
 # Node Voice Agent Starter
 
 Start building interactive voice experiences with Deepgram's Voice Agent API using this Node.js starter application. This project demonstrates how to create a voice agent that can engage in natural conversations using Deepgram's advanced AI capabilities.
@@ -17,10 +16,6 @@ Before you begin, ensure you have:
 
 ## Quickstart
 
-> TODO: Needs updating
-
-e.g.
-
 Follow these steps to get started with this starter application.
 
 ### Clone the repository
@@ -29,9 +24,7 @@ Go to GitHub and [clone the repository](https://github.com/deepgram-starters/nod
 
 ### Install dependencies
 
- > TODO: needs updating
-
-Install the project dependencies.
+Install the project dependencies:
 
 ```bash
 npm install
@@ -41,17 +34,27 @@ npm install
 
 Copy the code from `sample.env` and create a new file called `.env`. Paste in the code and enter your API key you generated in the [Deepgram Console](https://console.deepgram.com/).
 
-```json
-DEEPGRAM_API_KEY=%api_key%
+```
+DEEPGRAM_API_KEY=your_deepgram_api_key_here
 ```
 
 ### Run the application
 
-> TODO: Needs updating
+Start the server with:
 
 ```bash
 npm start
 ```
+
+Then open your browser and go to:
+
+```
+http://localhost:3000
+```
+
+- Allow microphone access when prompted.
+- Speak into your microphone to interact with the Deepgram Voice Agent.
+- You should hear the agent's responses played back in your browser.
 
 ## Using Cursor & MDC Rules
 
