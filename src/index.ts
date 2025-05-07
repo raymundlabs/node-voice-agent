@@ -42,6 +42,10 @@ async function connectToAgent() {
     // Set up event handlers
     agent.on(AgentEvents.Open, () => {
       console.log('Agent connection established');
+    });
+
+    agent.on('Welcome', (data) => {
+      console.log('Server welcome message:', data);
       agent.configure({
         audio: {
           input: {
@@ -84,11 +88,8 @@ Remember that you have a voice interface. You can listen and speak, and all your
             }
           }
         },
+        greeting: "Hello! How can I help you today?"
       });
-    });
-
-    agent.on('Welcome', (data) => {
-      console.log('Server welcome message:', data);
     });
 
     agent.on('SettingsApplied', (data) => {
