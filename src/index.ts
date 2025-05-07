@@ -41,34 +41,32 @@ async function connectToAgent() {
 
     // Set up event handlers
     agent.on(AgentEvents.Open, () => {
-      // Only log critical connection events
       console.log('Agent connection established');
       agent.configure({
-        type: 'SettingsConfiguration',
         audio: {
           input: {
             encoding: 'linear16',
-            sampleRate: 24000
+            sample_rate: 24000
           },
           output: {
             encoding: 'linear16',
-            sampleRate: 24000,
+            sample_rate: 24000,
             container: 'none'
           }
         },
         agent: {
           listen: {
-            model: 'nova-3'
-          },
-          speak: {
-            model: 'aura-asteria-en'
+            provider: {
+              type: 'deepgram',
+              model: 'nova-3'
+            }
           },
           think: {
-            model: 'gpt-4o-mini',
             provider: {
-              type: 'open_ai'
+              type: 'open_ai',
+              model: 'gpt-4o-mini'
             },
-            instructions: `You are a helpful voice assistant created by Deepgram. Your responses should be friendly, human-like, and conversational. Always keep your answers concise, limited to 1-2 sentences and no more than 120 characters.
+            prompt: `You are a helpful voice assistant created by Deepgram. Your responses should be friendly, human-like, and conversational. Always keep your answers concise, limited to 1-2 sentences and no more than 120 characters.
 
 When responding to a user's message, follow these guidelines:
 - If the user's message is empty, respond with an empty message.
@@ -78,18 +76,23 @@ When responding to a user's message, follow these guidelines:
 - If asked about your well-being, provide a brief response about how you're feeling.
 
 Remember that you have a voice interface. You can listen and speak, and all your responses will be spoken aloud.`
+          },
+          speak: {
+            provider: {
+              type: 'deepgram',
+              model: 'aura-2-thalia-en'
+            }
           }
         },
-        context: {
-          messages: [
-            {
-              content: 'Hello, how can I help you?',
-              role: 'assistant'
-            }
-          ],
-          replay: true
-        }
       });
+    });
+
+    agent.on('Welcome', (data) => {
+      console.log('Server welcome message:', data);
+    });
+
+    agent.on('SettingsApplied', (data) => {
+      console.log('Server confirmed settings:', data);
     });
 
     agent.on(AgentEvents.AgentStartedSpeaking, (data: { total_latency: number }) => {
