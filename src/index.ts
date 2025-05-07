@@ -86,9 +86,10 @@ Remember that you have a voice interface. You can listen and speak, and all your
               type: 'deepgram',
               model: 'aura-2-thalia-en'
             }
-          }
-        },
-        greeting: "Hello! How can I help you today?"
+          },
+          // @ts-expect-error 
+          greeting: "Hello! How can I help you today?"
+        }
       });
     });
 
