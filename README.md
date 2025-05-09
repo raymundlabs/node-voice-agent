@@ -67,6 +67,13 @@ This application can be modify as needed by using the [app-requirements.mdc](.cu
 3. Add the necessary configuration settings in the file.
 4. You can refer to the MDC file used to help build this starter application by reviewing  [app-requirements.mdc](.cursor/rules/app-requirements.mdc)
 
+## Testing
+
+Test the application with:
+
+```bash
+npm run test
+```
 
 ## Getting Help
 
