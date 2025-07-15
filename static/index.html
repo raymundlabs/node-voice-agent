@@ -46,7 +46,9 @@
                 mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
 
                 // Connect to WebSocket server
-                socket = new WebSocket('ws://localhost:3000');
+                socket = new WebSocket(
+                  (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/'
+                );
 
                 socket.onopen = () => {
                     isConnected = true;
